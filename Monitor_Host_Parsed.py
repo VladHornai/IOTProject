@@ -1,12 +1,10 @@
 import json
+import re
 from json import JSONEncoder
 
 
 class IP:
-    def __init__(self,name): 
-        self.name = name
-    
-    def concentrator(self,co_tsap_id, co_id, data_period, data_phase, data_stalelimit, data_version, interface_type):
+    def __init__(self,co_tsap_id, co_id, data_period, data_phase, data_stalelimit, data_version, interface_type): #takes coresponding parameters
         self.co_tsap_id = co_tsap_id
         self.co_id = co_id
         self.data_period = data_period
@@ -24,42 +22,31 @@ filename = "Resources/Monitor_Host_Publishers.conf"
 #fields in our file
 #fields = ['CO_TSAP_ID', 'CO_ID', 'Data_Period', 'Data_Phase', 'Data_StaleLimit', 'Data_version', 'interfaceType']
 
+data = {}
+
 with open(filename) as file:
     for line in file:
         #read line by line the file
         description = list(line.strip().split(None, 4))
 
-        #delete comments 
-        description = ''.join(line for line in file if not line.startswith('#'))
-        #print(description)
+        description = ''.join(line for line in file if not line.startswith('#')) #skip comments and creates string for file
 
-        #put the ip in place
-
-        ip = description.split('CONCENTRATOR')[0]
+        #extracts ip
+        ip = re.split(r'CONCENTRATOR |\n |\]',description)[0]
+        ip = ip.replace('[','')
         
-        if description.startswith('['):
-            print("yes")
-            data = IP(description)
-           
-        #we deal with the data of concentrator
-        print("--------")
-        print(description.split('CONCENTRATOR')[0])
-        print("----")
-       
-        if description.startswith('C'): 
-
-            description.split('=')
-         
-            data = IP.concentrator(description.split(',')[0], description.split(',')[1], description.split(',')[2], description.split(',')[3],
-                                        description.split(',')[4], description.split(',')[5], description.split(',')[6])
+        data[ip] = IP(re.split(', |\n|=',description)[2],   # CO_TSAP_ID
+                      re.split(', |\n|=',description)[3],   # CO_ID
+                      re.split(', |\n|=',description)[4],   # Data_Period
+                      re.split(', |\n|=',description)[5],   # Data_Phase
+                      re.split(', |\n|=',description)[6],   # Data_StaleLimit
+                      re.split(', |\n|=',description)[7],   # Data_version
+                      re.split(', |\n|=',description)[8])   # interfaceType
         
         
-        print(IPEncoder().encode(data))
         dataJSON = json.dumps(data, indent = 4, cls=IPEncoder)
         out_file = open("parsedFile.json", "w")
-        print(dataJSON)
+        out_file.write(dataJSON)
         out_file.close()
 
-
-#json.dump(dict1, out_file, indent = 4)
 
