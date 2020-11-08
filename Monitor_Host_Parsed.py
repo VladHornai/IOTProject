@@ -4,7 +4,7 @@ from json import JSONEncoder
 
 
 class IP:
-    def __init__(self,co_tsap_id, co_id, data_period, data_phase, data_stalelimit, data_version, interface_type): #takes coresponding parameters
+    def __init__(self,co_tsap_id, co_id, data_period, data_phase, data_stalelimit, data_version, interface_type, ): #takes coresponding parameters
         self.co_tsap_id = co_tsap_id
         self.co_id = co_id
         self.data_period = data_period
@@ -12,6 +12,7 @@ class IP:
         self.data_stalelimit = data_stalelimit
         self.data_version = data_version
         self.interface_type = interface_type
+        self.channel = []
 
 class IPEncoder(JSONEncoder):
     def default(self, o):
@@ -22,7 +23,7 @@ filename = "Resources/Monitor_Host_Publishers.conf"
 #fields in our file
 #fields = ['CO_TSAP_ID', 'CO_ID', 'Data_Period', 'Data_Phase', 'Data_StaleLimit', 'Data_version', 'interfaceType']
 
-data = {}
+concentrator = {}
 
 with open(filename) as file:
     for line in file:
@@ -35,18 +36,17 @@ with open(filename) as file:
         ip = re.split(r'CONCENTRATOR |\n |\]',description)[0]
         ip = ip.replace('[','')
         
-        data[ip] = IP(re.split(', |\n|=',description)[2],   # CO_TSAP_ID
-                      re.split(', |\n|=',description)[3],   # CO_ID
-                      re.split(', |\n|=',description)[4],   # Data_Period
-                      re.split(', |\n|=',description)[5],   # Data_Phase
-                      re.split(', |\n|=',description)[6],   # Data_StaleLimit
-                      re.split(', |\n|=',description)[7],   # Data_version
-                      re.split(', |\n|=',description)[8])   # interfaceType
+        concentrator[ip] = IP(re.split(', |\n|=',description)[2],   # CO_TSAP_ID
+                              re.split(', |\n|=',description)[3],   # CO_ID
+                              re.split(', |\n|=',description)[4],   # Data_Period
+                              re.split(', |\n|=',description)[5],   # Data_Phase
+                              re.split(', |\n|=',description)[6],   # Data_StaleLimit
+                              re.split(', |\n|=',description)[7],   # Data_version
+                              re.split(', |\n|=',description)[8])   # interfaceType
         
         
-        dataJSON = json.dumps(data, indent = 4, cls=IPEncoder)
+        
+        dataJSON = json.dumps(concentrator, indent = 4, cls=IPEncoder)
         out_file = open("parsedFile.json", "w")
         out_file.write(dataJSON)
         out_file.close()
-
-
