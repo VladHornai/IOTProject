@@ -28,7 +28,7 @@ concentrator = {}
 with open(filename) as file:
     for line in file:
         #read line by line the file
-        description = list(line.strip().split(None, 4))
+        description = list(line.strip().split(None, 4))g
 
         description = ''.join(line for line in file if not line.startswith('#')) #skip comments and creates string for file
 
