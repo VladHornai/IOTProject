@@ -16,9 +16,8 @@ with open(filename, 'r') as file:
     data = json.load(file)
     for obj in data: 
         startaddr = int(obj.get("start_addr", None).strip(" "))
-        wordcnt = int(obj.get("word_cnt",None))
+        wordcnt = int(obj.get("word_cnt", None))
         reg = client.read_input_registers(startaddr,wordcnt)
         print(reg.registers)
-        
-        
+            
 client.close()
