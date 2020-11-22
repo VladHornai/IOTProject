@@ -24,7 +24,6 @@ class RegisterEncoder(JSONEncoder):
 
 filename = "Resources/modbus_gw.ini"
 
-
 reg = []
 regObj = {}
 
@@ -32,16 +31,16 @@ with open(filename, 'r') as file:
     for line in file:
         # list of registers
         if(line.startswith('REGISTER =')):
-            regObj = Register(re.split(',|\n|=', line)[1],
-                              re.split(',|\n|=', line)[2],
-                              re.split(',|\n|=', line)[3],
-                              re.split(',|\n|=', line)[4],
-                              re.split(',|\n|=', line)[5],
-                              re.split(',|\n|=', line)[6],
-                              re.split(',|\n|=', line)[7],
-                              re.split(',|\n|=', line)[8],
-                              re.split(',|\n|=', line)[9],
-                              re.split(',|\n|=', line)[10])
+            regObj = Register(re.split(',|\n|=', line)[1],  # start_addr   
+                              re.split(',|\n|=', line)[2],  # word_cnt 
+                              re.split(',|\n|=', line)[3],  # EUI64 
+                              re.split(',|\n|=', line)[4],  # TSAPID
+                              re.split(',|\n|=', line)[5],  # ObjId 
+                              re.split(',|\n|=', line)[6],  # AttrId  
+                              re.split(',|\n|=', line)[7],  # Idx1 
+                              re.split(',|\n|=', line)[9],  # Idx2 
+                              re.split(',|\n|=', line)[8],  # MethId 
+                              re.split(',|\n|=', line)[10]) # status 
             reg.append(regObj)
 
         if not(line.startswith('\n') or line.startswith('#')):
