@@ -24,7 +24,6 @@ class RegisterEncoder(JSONEncoder):
 
 filename = "Resources/modbus_gw.ini"
 
-
 reg = []
 regObj = {}
 
