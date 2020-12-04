@@ -30,7 +30,7 @@ with open(filename, 'r') as file:
         #print(gw_dict)
 
 dataJSON = json.dumps(gw_dict, indent=4)    
-out_file = open("pyModbus.json", "w")
+out_file = open("Outputs/pyModbus.json", "w")
 out_file.write(dataJSON)
 out_file.close()  
 client.close()
