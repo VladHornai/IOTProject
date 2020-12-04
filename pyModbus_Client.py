@@ -5,7 +5,7 @@ import json
 import Modbus_Gw_Parsed
 
 # Opening JSON file 
-filename = 'modbus_gw_file_parsed.json'
+filename = 'Outputs/modbus_gw_file_parsed.json'
 # Iterating through the json 
 # list 
 client = ModbusTcpClient('127.0.0.1', port=502)
