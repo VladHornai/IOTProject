@@ -17,6 +17,7 @@
 		<canvas id="canvas"></canvas>
     </div>
     <script>
+        console.log("here")
     Promise.all([
     fetch('Outputs/Monitor_Host_Publishers_Parsed.json').then(resp => resp.json()),
     fetch('Outputs/Modbus_Gw_File_Parsed.json').then(resp => resp.json()),
