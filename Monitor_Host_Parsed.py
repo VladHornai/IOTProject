@@ -55,6 +55,7 @@ with open(filename,'r') as file:
         if(line.startswith('[')):
             ip = re.split(r'CONCENTRATOR |\n |\]', line)[0]
             ip = ip.replace('[', '')
+            ip = ip.replace(':', '')
             channel = []
 
         # list of channels
