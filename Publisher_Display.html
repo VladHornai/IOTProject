@@ -4,15 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="chart.css">
     <title>Publisher</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script></script>
 </head>
 <body>
     <div id="myData"></div>
+    
+    <div style="width:75%;">
+		<canvas id="canvas"></canvas>
+    </div>
     <script>
     Promise.all([
     fetch('Outputs/Monitor_Host_Publishers_Parsed.json').then(resp => resp.json()),
-    fetch('Outputs/Modbus_Gw_File_Parsed.json').then(resp => resp.json())
+    fetch('Outputs/Modbus_Gw_File_Parsed.json').then(resp => resp.json()),
+    fetch('Outputs/pyModbus.json').then(resp => resp.json())
           ]).then(function (data) {
                 appendData(data);
                 console.log(data);
@@ -37,7 +45,10 @@
                               '<br/>interface_type: '+data[0][ip].concentrator.interface_type+'<br/>_';   
               mainContainer.appendChild(div);
           }  
+
+          //we will work with data 2!
     }
     </script>
+    <script src = "testChart.js"></script>
 </body>
 </html>
