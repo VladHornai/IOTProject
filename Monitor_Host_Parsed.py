@@ -36,20 +36,17 @@ class IPEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
-
-filename = "Resources/Monitor_Host_Publishers.conf"
-
 # fields in our file
 #fields = ['CO_TSAP_ID', 'CO_ID', 'Data_Period', 'Data_Phase', 'Data_StaleLimit', 'Data_version', 'interfaceType']
 #channel_info = TSAP_ID, ObjID, AttrID, Index1, Index2, format = {'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'float'}, name, unit of measurement, withStatus
 
-data_chunk = {}
-ip = ''
-concentrator = {}
-chObj = {}
-channel = []
-
 def runHost():
+    filename = "Resources/Monitor_Host_Publishers.conf"
+    concentrator = {}
+    data_chunk = {}
+    ip = ''
+    chObj = {}
+    channel = []
     with open(filename,'r') as file:
         for line in file:     
             # extracts ip
@@ -58,7 +55,7 @@ def runHost():
                 ip = ip.replace('[', '')
                 ip = ip.replace(':', '')
                 channel = []
-    
+
             # list of channels
             if(line.startswith('CHANNEL =')):
                 chObj = Channel(re.split(', |\n|=', line)[1],    # TSAP_ID
@@ -71,7 +68,7 @@ def runHost():
                                 re.split(', |\n|=', line)[8],    # unit of measurement
                                 re.split(', |\n|=', line)[9])    # withStatus
                 channel.append(chObj)
-                
+
             if(line.startswith('CONCENTRATOR =')):
                 concentrator = Concentrator(re.split(', |\n|=', line)[1],    # CO_TSAP_ID
                                             re.split(', |\n|=', line)[2],    # CO_ID
@@ -80,12 +77,14 @@ def runHost():
                                             re.split(', |\n|=', line)[5],    # Data_StaleLimit
                                             re.split(', |\n|=', line)[6],    # Data_version
                                             re.split(', |\n|=', line)[7])    # interfaceType
-            
+
             if not(line.startswith('\n') or line.startswith('#')):
                 data_chunk[ip] = IP(concentrator, channel)
                 dataJSON = json.dumps(data_chunk, indent=4, cls=IPEncoder)
-    
+
     out_file = open("static/Monitor_Host_Publishers_Parsed.json", "w")
     out_file.write(dataJSON)
     out_file.close()
     print("Host Parsed")
+
+runHost()

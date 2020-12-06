@@ -21,13 +21,10 @@ class RegisterEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
-
-filename = "Resources/modbus_gw.ini"
-
-reg = []
-regObj = {}
-
 def runGw():
+    filename = "Resources/modbus_gw.ini"
+    reg = []
+    regObj = {}
     with open(filename, 'r') as file:
         for line in file:
             # list of registers
@@ -51,3 +48,5 @@ def runGw():
     out_file.write(dataJSON)
     out_file.close()
     print("Gateway Parsed")
+
+runGw()

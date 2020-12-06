@@ -21,7 +21,7 @@
 
 <body>
 <!-- This will update the output files -->
-<form action = "/update/">
+<form action = "/update">
     <input type="submit" value="Fetch New Data">
 </form>
 <!--backend.py (NOT WORKING YET) -->
@@ -51,7 +51,8 @@ function appendData(data){
   var mainContainer = document.getElementById("myData");
       var ip;
       for(var i=0; i<data[1].length; i++){
-          ip = data[1][i].Eui64;
+		  ip = data[1][i].Eui64;
+		  console.log(ip+': '+i)
           var div = document.createElement("div");
           div.innerHTML = '<br/>Address: '+data[1][i].start_addr+
                           '<br/>Number of Registers: '+data[1][i].word_cnt+
