@@ -87,4 +87,10 @@ def runHost():
     out_file.close()
     print("Host Parsed")
 
+<<<<<<< HEAD
 runHost()
+=======
+out_file = open("static/Monitor_Host_Publishers_Parsed.json", "w")
+out_file.write(dataJSON)
+out_file.close()
+>>>>>>> da7bcc1 (server commit)
