@@ -88,8 +88,11 @@ def runHost():
     print("Host Parsed")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 runHost()
 =======
+=======
+>>>>>>> da7bcc1f62a912886e4eb58e8311a826649a023d
 out_file = open("static/Monitor_Host_Publishers_Parsed.json", "w")
 out_file.write(dataJSON)
 out_file.close()

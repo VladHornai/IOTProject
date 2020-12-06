@@ -22,10 +22,14 @@
 <body>
 <!-- This will update the output files -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 <form action = "/update">
 =======
 <form action = "/update/">
 >>>>>>> da7bcc1 (server commit)
+=======
+<form action = "/update/">
+>>>>>>> da7bcc1f62a912886e4eb58e8311a826649a023d
     <input type="submit" value="Fetch New Data">
 </form>
 <!--backend.py (NOT WORKING YET) -->
@@ -56,11 +60,15 @@ function appendData(data){
       var ip;
       for(var i=0; i<data[1].length; i++){
 <<<<<<< HEAD
+<<<<<<< HEAD
 		  ip = data[1][i].Eui64;
 		  console.log(ip+': '+i)
 =======
           ip = data[1][i].Eui64;
 >>>>>>> da7bcc1 (server commit)
+=======
+          ip = data[1][i].Eui64;
+>>>>>>> da7bcc1f62a912886e4eb58e8311a826649a023d
           var div = document.createElement("div");
           div.innerHTML = '<br/>Address: '+data[1][i].start_addr+
                           '<br/>Number of Registers: '+data[1][i].word_cnt+

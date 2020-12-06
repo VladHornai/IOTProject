@@ -10,15 +10,9 @@
     "1": {
         "register": 13,
         "response": [
-<<<<<<< HEAD:static/pyModbus.json
-            28,
-            72,
-            47
-=======
             32,
             50,
             60
->>>>>>> da7bcc1 (server commit):Outputs/pyModbus.json
         ]
     }
 }
