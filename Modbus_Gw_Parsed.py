@@ -46,6 +46,6 @@ with open(filename, 'r') as file:
         if not(line.startswith('\n') or line.startswith('#')):
             dataJSON = json.dumps(reg, indent=4, cls=RegisterEncoder)
 
-out_file = open("Outputs/Modbus_Gw_File_Parsed.json", "w")
+out_file = open("static/Modbus_Gw_File_Parsed.json", "w")
 out_file.write(dataJSON)
 out_file.close()

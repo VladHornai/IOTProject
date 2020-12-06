@@ -84,6 +84,6 @@ with open(filename,'r') as file:
             data_chunk[ip] = IP(concentrator, channel)
             dataJSON = json.dumps(data_chunk, indent=4, cls=IPEncoder)
 
-out_file = open("Outputs/Monitor_Host_Publishers_Parsed.json", "w")
+out_file = open("static/Monitor_Host_Publishers_Parsed.json", "w")
 out_file.write(dataJSON)
 out_file.close()

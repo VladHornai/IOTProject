@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Publisher</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script></script>
+</head>
+
+<body>
+<!-- This will update the output files -->
+<form action = "/update/">
+    <input type="submit" value="Fetch New Data">
+</form>
+<!--backend.py (NOT WORKING YET) -->
+
+    <div id="myData"></div>
+    <div style="width:75%;">
+		<canvas id="canvas"></canvas>
+    </div>
+<script>
+    Promise.all([
+    //Configuration Data: Represent the meaning of the important data
+    fetch('/static/Monitor_Host_Publishers_Parsed.json').then(resp => resp.json()),
+    fetch('/static/Modbus_Gw_File_Parsed.json').then(resp => resp.json()),
+    //Publish Data: Display graphically
+    fetch('/static/pyModbus.json').then(resp => resp.json())
+          ]).then(function (data) {
+                appendData(data);
+                console.log(data);
+                chart(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+
+function appendData(data){
+//Representing configuration data
+  var mainContainer = document.getElementById("myData");
+      var ip;
+      for(var i=0; i<data[1].length; i++){
+          ip = data[1][i].Eui64;
+          var div = document.createElement("div");
+          div.innerHTML = '<br/>Address: '+data[1][i].start_addr+
+                          '<br/>Number of Registers: '+data[1][i].word_cnt+
+                          '<br/>Device: '+ip+
+                          '<br/>Unit of measurement: '+data[0][ip].channel[0].unit_of_measurement+
+                          '<br/>Status: '+data[0][ip].channel[0].withStatus+'<br/>_';   
+          mainContainer.appendChild(div);
+      }  
+}
+
+function state_bulb(data){
+//Temporary(?) State Checker    
+reg1 = data[1][0].status; // if is 2 the last register will represent the status
+reg2 = data[1][1].status; // and not sensor value
+/*
+128 - Data is Fresh (green)
+20 - Data is stale (yellow)
+0 - Missing data or connection (red)
+*/
+}
+
+function chart(data){
+//Publish Data Chart
+window.chartColors = { 	red: 'rgb(255, 0, 0)', 	green: 'rgb(0, 128, 0)', yellow: 'rgb(200, 200, 0)' }; 
+
+var randomScalingFactor = function() {
+			return Math.round(Math.random() * 100);
+		};
+
+var labelnames = ["10s", "20s", "30s", "40s",//TODO: Make labelnames scale-able based on data[2][0].response.length max
+                  "50s", "60s", "70s", "80s",
+                  "80s", "100s", "110s", 
+                  "120s", "130s", "140s", 
+                  "150s", "160s", "170s"];
+    
+var count = data[2][0].response.length; //TODO: Make a max function to compare all data[2] lengths
+var requiredLabels = labelnames .slice(0,count);
+
+var config = {
+		type: 'line',
+		data: {
+			labels: requiredLabels,
+			datasets: [{
+				label: 'Register ' +data[2][0].register,
+				data: data[2][0].response,
+				borderColor: window.chartColors.green,
+				backgroundColor: 'rgba(0, 0, 0, 0)',
+				fill: false,
+				cubicInterpolationMode: 'monotone'
+			}, {
+				label: 'Register ' +data[2][1].register,
+				data: data[2][1].response,
+				borderColor: window.chartColors.red,
+				backgroundColor: 'rgba(0, 0, 0, 0)',
+				fill: false,
+				cubicInterpolationMode: 'monotone'
+            }]
+		},
+		options: {
+			responsive: true,
+			title: {
+				display: true,
+				text: 'Configuration Chart'
+			},
+			tooltips: {
+				mode: 'index'
+			},
+			scales: {
+				xAxes: [{
+					display: true,
+					scaleLabel: {
+						display: true
+					}
+				}],
+				yAxes: [{
+					display: true,
+					scaleLabel: {
+						display: true,
+						labelString: 'Value'
+					},
+					ticks: {
+						suggestedMin: 0,
+						suggestedMax: 100,
+					}
+				}]
+			}
+		},		
+	};
+
+var ctx = document.getElementById('canvas').getContext('2d');
+window.myLine = new Chart(ctx, config);
+}
+</script>
+</body>
+</html>
