@@ -5,13 +5,16 @@ import Monitor_Host_Parsed
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == "POST":
+@app.route('/')
+def Publisher_Display():
         return render_template('Publisher_Display.html')
-        Modbus_Gw_Parsed
-        Monitor_Host_Parsed
+
+@app.route('/update/')
+def update():
+    print("Updated?")
+        #Modbus_Gw_Parsed
+        #Monitor_Host_Parsed
         #pyModbus_Client
 
-if __name__ == "__main__";
-    app.run()
+if __name__ == '__main__':
+  app.run()

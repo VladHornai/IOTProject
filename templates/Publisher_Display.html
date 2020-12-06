@@ -21,8 +21,8 @@
 
 <body>
 <!-- This will update the output files -->
-<form method = "POST">
-    <input type="button" id="script" name="submit" value="Fetch New Data">
+<form action = "/update/">
+    <input type="submit" value="Fetch New Data">
 </form>
 <!--backend.py (NOT WORKING YET) -->
 
@@ -33,10 +33,10 @@
 <script>
     Promise.all([
     //Configuration Data: Represent the meaning of the important data
-    fetch('Outputs/Monitor_Host_Publishers_Parsed.json').then(resp => resp.json()),
-    fetch('Outputs/Modbus_Gw_File_Parsed.json').then(resp => resp.json()),
+    fetch('/static/Monitor_Host_Publishers_Parsed.json').then(resp => resp.json()),
+    fetch('/static/Modbus_Gw_File_Parsed.json').then(resp => resp.json()),
     //Publish Data: Display graphically
-    fetch('Outputs/pyModbus.json').then(resp => resp.json())
+    fetch('/static/pyModbus.json').then(resp => resp.json())
           ]).then(function (data) {
                 appendData(data);
                 console.log(data);
