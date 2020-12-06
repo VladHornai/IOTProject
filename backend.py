@@ -1,7 +1,8 @@
 from flask import Flask, render_template, jsonify
+import json
 import Modbus_Gw_Parsed
 import Monitor_Host_Parsed
-#import pyModbus_Client
+import pyModbus_Client
 
 app = Flask(__name__)
 
@@ -11,10 +12,9 @@ def Publisher_Display():
 
 @app.route('/update/')
 def update():
-    print("Updated?")
-        #Modbus_Gw_Parsed
-        #Monitor_Host_Parsed
-        #pyModbus_Client
-
+    #Modbus_Gw_Parsed.runGw()
+    Monitor_Host_Parsed.runHost()
+    #pyModbus_Client.runMod()
+    return render_template('Publisher_Display.html')
 if __name__ == '__main__':
   app.run()
