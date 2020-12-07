@@ -5,15 +5,16 @@ import json
 import Modbus_Gw_Parsed
 
 # Opening JSON file 
-filename = 'static/modbus_gw_file_parsed.json'
+
 # Iterating through the json 
 # list 
-client = ModbusTcpClient('127.0.0.1', port=502)
-client.connect()
-gw_dict = {}
-count = 0
 
 def runMod():
+    filename = 'static/modbus_gw_file_parsed.json'
+    client = ModbusTcpClient('127.0.0.1', port=502)
+    client.connect()
+    gw_dict = {}
+    count = 0
     with open(filename, 'r') as file:
         data = json.load(file)
         for obj in data: 
@@ -36,3 +37,5 @@ def runMod():
     out_file.close()  
     client.close()
     print("Modbus parsed")
+
+runMod()
