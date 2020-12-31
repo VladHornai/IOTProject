@@ -1,7 +1,7 @@
 [
     {
         "start_addr": " 10",
-        "word_cnt": "3",
+        "word_cnt": "2",
         "Eui64": "1020000000000061",
         "Tsapid": "2",
         "ObjId": "129",
@@ -13,7 +13,7 @@
     },
     {
         "start_addr": " 13",
-        "word_cnt": "3",
+        "word_cnt": "2",
         "Eui64": "0022FF0000021F11",
         "Tsapid": "2",
         "ObjId": "7",
