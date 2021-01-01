@@ -47,8 +47,8 @@
             });
 
 var DB_Data = new Array( );
-DB_Data[0] = {{ Data1 | safe }}; console.log(DB_Data[0]);
-DB_Data[1] = {{ Data2 | safe }}; console.log(DB_Data[1]);
+DB_Data = {{ Data | safe }}
+console.log(DB_Data);
 
 function appendData(data){
 //Representing configuration data
@@ -67,50 +67,22 @@ function appendData(data){
       }  
 }
 
-function state_bulb(data){
-//Temporary(?) State Checker    
-//TODO: Show status
-reg1 = data[1][0].status; // if is 2 the last register will represent the status
-reg2 = data[1][1].status; // and not sensor value
-/*
-128 - Data is Fresh (green)
-20 - Data is stale (yellow)
-0 - Missing data or connection (red)
-*/
-}
-
 function chart(data){
 //Publish Data Chart
-window.chartColors = { 	red: 'rgb(255, 0, 0)', 	green: 'rgb(0, 128, 0)', yellow: 'rgb(200, 200, 0)' }; 
+window.chartColors = { 	red: 'rgb(255, 0, 0)', 	green: 'rgb(0, 128, 0)', yellow: 'rgb(200, 200, 0)', gray: 'rgb(80, 80, 80)' }; 
 
 var randomScalingFactor = function() {
 			return Math.round(Math.random() * 100);
 		};
 
 var today = new Date();
-var labelnames = DB_Data[0][1];
-    
-var count = data[2][0].response.length; //TODO: Make a max function to compare all data[2] lengths
+var labelnames = DB_Data[0][0];
 
 var config = {
 		type: 'line',
-		data: { //TODO: Make number of datasets scale-able
+		data: { 
 			labels: labelnames,
-			datasets: [{
-				label: 'Register ' +data[2][0].register,
-				data: DB_Data[0][3],
-				borderColor: window.chartColors.green,
-				backgroundColor: 'rgba(0, 0, 0, 0)',
-				fill: false,
-				cubicInterpolationMode: 'monotone'
-			}, {
-				label: 'Register ' +data[2][1].register,
-				data: DB_Data[1][3],
-				borderColor: window.chartColors.red,
-				backgroundColor: 'rgba(0, 0, 0, 0)',
-				fill: false,
-				cubicInterpolationMode: 'monotone'
-            }]
+			datasets: []
 		},
 		options: {
 			responsive: true,
@@ -127,6 +99,7 @@ var config = {
 					scaleLabel: {
 						display: true
 					}
+					
 				}],
 				yAxes: [{
 					display: true,
@@ -136,15 +109,52 @@ var config = {
 					},
 					ticks: {
 						suggestedMin: 0,
-						suggestedMax: 100,
-					}
+					},
+					offset: true
 				}]
-			}
+			},
+
 		},		
 	};
 
 var ctx = document.getElementById('canvas').getContext('2d');
 window.myLine = new Chart(ctx, config);
+var myChart = window.myLine;
+
+for(i = 0; i < DB_Data.length; i++){
+var dset = {
+		label: 'Register ' +data[2][i].register,
+		data: DB_Data[i][2],
+		backgroundColor: 'rgba(0,0,0,0)',
+		fill: false,
+		cubicInterpolationMode: 'monotone',
+		pointBackgroundColor: [],
+		pointStyle: [],
+		radius: 3
+	}
+	myChart.data.datasets.push(dset);
+}
+
+myChart.update()
+	for(j = 0; j < DB_Data.length; j++){
+		for(i = 0; i < DB_Data[j][3].length; i++){
+			if(DB_Data[j][3][i] == 128){
+				myChart.data.datasets[j].pointBackgroundColor.push("green");
+				myChart.data.datasets[j].pointStyle.push("rect");
+			} else if (DB_Data[j][3][i] == 20){
+				myChart.data.datasets[j].pointBackgroundColor.push("yellow");
+				myChart.data.datasets[j].pointStyle.push("triange");
+			} else if (DB_Data[j][3][i] == 0){
+				myChart.data.datasets[j].pointBackgroundColor.push("red");
+				myChart.data.datasets[j].pointStyle.push("circle");
+			} else {
+				myChart.data.datasets[j].pointBackgroundColor.push("gray");
+				myChart.data.datasets[j].pointStyle.push("star");
+			}
+		}
+	}
+myChart.update()
+
 }
 </script>
 </body>

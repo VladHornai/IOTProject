@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 
 # Change each time
-URL_MONGO = "mongodb://127.0.0.1:57346/94a4e87d-10e4-4bc8-9f61-5ecf6fedb32e?"
+URL_MONGO = "mongodb://127.0.0.1:50615/1202a60d-284e-4c11-8cc9-19d98f8c49a5?"
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 
@@ -18,13 +18,12 @@ def Create_Db():
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
     ips = []
-    count = 0
+
     with open(file_GW, 'r') as file:
         data = json.load(file)
         for obj in data:
             ip = obj.get("Eui64", None)
             ips.append(ip)
-            count += 1
 
     resps = []
     with open(file_MB, 'r') as file:
