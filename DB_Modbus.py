@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 
 # Change each time
-URL_MONGO = "mongodb://127.0.0.1:52883/1ed6b0c2-34d3-4e06-abcd-f5783309eef6?"
+URL_MONGO = "mongodb://127.0.0.1:57346/94a4e87d-10e4-4bc8-9f61-5ecf6fedb32e?"
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 
@@ -15,6 +15,8 @@ file_GW = 'static/modbus_gw_file_parsed.json'
 file_MB = 'static/pyModbus.json'
 
 def Create_Db():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
     ips = []
     count = 0
     with open(file_GW, 'r') as file:
