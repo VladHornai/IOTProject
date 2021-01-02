@@ -37,6 +37,7 @@ for i in range(len(Reg)):
     d[i][1].append(Reg[i][j]["Type"])
     d[i][2].append(Reg[i][j]["Value"])
     d[i][3].append(Reg[i][j]["Status"])
+    d[i][4].append(Reg[i][j]["Register"])
 
 @app.route('/')
 def Publisher_Display():
@@ -63,6 +64,7 @@ def update():
      d[i][1].append(Reg[i][j]["Type"])
      d[i][2].append(Reg[i][j]["Value"])
      d[i][3].append(Reg[i][j]["Status"])
+     d[i][4].append(Reg[i][j]["Register"])
   
   return render_template('Publisher_Display.html', Data = d, t = title)
     

@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 
 # Change each time
-URL_MONGO = "mongodb://127.0.0.1:50615/1202a60d-284e-4c11-8cc9-19d98f8c49a5?"
+URL_MONGO = "mongodb://127.0.0.1:49689/82ec598c-450d-4274-bf9e-75d25dcae2be?"
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 
