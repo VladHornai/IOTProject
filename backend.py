@@ -10,74 +10,63 @@ import DB_Modbus
 app = Flask(__name__)
 
 title = "IOT Project"
+file_GW = 'static/modbus_gw_file_parsed.json'
 
 client = MongoClient(DB_Modbus.URL_MONGO)
 db = client.IOT_Modbus_DB
 col = db.IOT_Modbus_Coll
-Reg1 = []
-Reg2 = []
+ips = []
 
-for x in col.find({ "Register": "1020000000000061" },{"_id": 0}):
-  Reg1.append(x)
-for x in col.find({ "Register": "0022FF0000021F11" },{"_id": 0}):
-  Reg2.append(x)
+with open(file_GW, 'r') as file:
+        data = json.load(file)
+        for obj in data:
+            ip = obj.get("Eui64", None)
+            ips.append(ip)
 
-d1 = [[],[],[],[],[]]
+Reg = [ [] for x in range(len(ips)) ]
 
-d1[0].append(Reg1[0]["Register"])
-for i in range(len(Reg1)):
-  d1[1].append(Reg1[i]["Time"])
-  d1[2].append(Reg1[i]["Type"])
-  d1[3].append(Reg1[i]["Value"])
-  d1[4].append(Reg1[i]["Status"])
+for i in range(len(ips)):
+  for x in col.find({ "Register": ips[i] },{"_id": 0}):
+    Reg[i].append(x)
 
-d2 = [[],[],[],[],[]]
+d = [[ [],[],[],[],[] ] for x in range(len(Reg))]
 
-d2[0].append(Reg2[0]["Register"])
-for i in range(len(Reg2)):
-  d2[1].append(Reg2[i]["Time"])
-  d2[2].append(Reg2[i]["Type"])
-  d2[3].append(Reg2[i]["Value"])
-  d2[4].append(Reg2[i]["Status"])
+for i in range(len(Reg)):
+  for j in range(len(Reg[i])):
+    d[i][0].append(Reg[i][j]["Time"])
+    d[i][1].append(Reg[i][j]["Type"])
+    d[i][2].append(Reg[i][j]["Value"])
+    d[i][3].append(Reg[i][j]["Status"])
+    d[i][4].append(Reg[i][j]["Register"])
 
 @app.route('/')
 def Publisher_Display():
-        return render_template('Publisher_Display.html', Data1 = d1, Data2 = d2, t = title)
+        return render_template('Publisher_Display.html', Data = d, t = title)
 
 @app.route('/update')
 def update():
-    Modbus_Gw_Parsed.runGw()
-    Monitor_Host_Parsed.runHost()
-    pyModbus_Client.runMod()
-    DB_Modbus.Create_Db()
+  Modbus_Gw_Parsed.runGw()
+  Monitor_Host_Parsed.runHost()
+  pyModbus_Client.runMod()
+  DB_Modbus.Create_Db()
 
-    Reg1 = []
-    Reg2 = []
+  Reg = [ [] for x in range(len(ips)) ]
 
-    for x in col.find({ "Register": "1020000000000061" },{"_id": 0}):
-      Reg1.append(x)
-    for x in col.find({ "Register": "0022FF0000021F11" },{"_id": 0}):
-      Reg2.append(x)
-
-    d1 = [[],[],[],[],[]]
-
-    d1[0].append(Reg1[0]["Register"])
-    for i in range(len(Reg1)):
-      d1[1].append(Reg1[i]["Time"])
-      d1[2].append(Reg1[i]["Type"])
-      d1[3].append(Reg1[i]["Value"])
-      d1[4].append(Reg1[i]["Status"])
-
-    d2 = [[],[],[],[],[]]
-
-    d2[0].append(Reg2[0]["Register"])
-    for i in range(len(Reg2)):
-      d2[1].append(Reg2[i]["Time"])
-      d2[2].append(Reg2[i]["Type"])
-      d2[3].append(Reg2[i]["Value"])
-      d2[4].append(Reg2[i]["Status"])
+  for i in range(len(ips)):
+   for x in col.find({ "Register": ips[i] },{"_id": 0}):
+     Reg[i].append(x)
   
-    return render_template('Publisher_Display.html', Data1 = d1, Data2 = d2, t = title)
+   d = [[ [],[],[],[],[] ] for x in range(len(Reg))]
+
+  for i in range(len(Reg)):
+   for j in range(len(Reg[i])):
+     d[i][0].append(Reg[i][j]["Time"])
+     d[i][1].append(Reg[i][j]["Type"])
+     d[i][2].append(Reg[i][j]["Value"])
+     d[i][3].append(Reg[i][j]["Status"])
+     d[i][4].append(Reg[i][j]["Register"])
+  
+  return render_template('Publisher_Display.html', Data = d, t = title)
     
 if __name__ == '__main__':
   app.config['TEMPLATES_AUTO_RELOAD'] = True

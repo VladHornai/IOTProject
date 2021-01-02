@@ -17,6 +17,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="https://requirejs.org/docs/release/2.3.6/r.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
 <body>
@@ -26,10 +30,27 @@
 </form>
 <!--backend.py -->
 
-    <div id="myData"></div>
-    <div style="width:75%;">
-		<canvas id="canvas"></canvas>
-    </div>
+<div class="chartContainer">
+	<canvas id="canvas"></canvas>
+</div>
+
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+		  <tr>
+			<th scope="col">Register</th>
+			<th scope="col">Value</th>
+			<th scope="col">Type</th>
+			<th scope="col">Status</th>
+			<th scope="col">Time</th>
+		  </tr>
+		</thead>
+		<tbody id="myTable">
+		 
+		</tbody>
+	</table>
+  </div>
+
 <script>
     Promise.all([
     //Configuration Data: Represent the meaning of the important data
@@ -38,7 +59,7 @@
     //Publish Data: Display graphically
     fetch('/static/pyModbus.json').then(resp => resp.json())
           ]).then(function (data) {
-                appendData(data);
+                appendData();
                 console.log(data);
                 chart(data);
             })
@@ -47,70 +68,61 @@
             });
 
 var DB_Data = new Array( );
-DB_Data[0] = {{ Data1 | safe }}; console.log(DB_Data[0]);
-DB_Data[1] = {{ Data2 | safe }}; console.log(DB_Data[1]);
+DB_Data = {{ Data | safe }}
+console.log(DB_Data);
 
-function appendData(data){
+function appendData(){
 //Representing configuration data
-  var mainContainer = document.getElementById("myData");
-      var ip;
-      for(var i=0; i<data[1].length; i++){
-		  ip = data[1][i].Eui64;
-		  console.log(ip+': '+i)
-          var div = document.createElement("div");
-          div.innerHTML = '<br/>Address: '+data[1][i].start_addr+
-                          '<br/>Number of Registers: '+data[1][i].word_cnt+
-                          '<br/>Device: '+ip+
-                          '<br/>Unit of measurement: '+data[0][ip].channel[0].unit_of_measurement+
-                          '<br/>Status: '+data[0][ip].channel[0].withStatus+'<br/>_';   
-          mainContainer.appendChild(div);
-      }  
-}
-
-function state_bulb(data){
-//Temporary(?) State Checker    
-//TODO: Show status
-reg1 = data[1][0].status; // if is 2 the last register will represent the status
-reg2 = data[1][1].status; // and not sensor value
-/*
-128 - Data is Fresh (green)
-20 - Data is stale (yellow)
-0 - Missing data or connection (red)
-*/
+  var mainContainer = document.getElementById("myTable");
+  for(i = 0; i < DB_Data[0][3].length; i++){
+		for(j = 0; j < DB_Data.length; j++){
+		  var tr = document.createElement("tr");
+		  if (DB_Data[j][3][i] == 128){
+		  	tr.innerHTML =  '<td class = "table-success">'+ DB_Data[j][4][i] +'</td>' +   // Register
+							'<td class = "table-success">'+ DB_Data[j][2][i] +'</td>' +   // Value
+							'<td class = "table-success">'+ DB_Data[j][1][i] +'</td>' +   // Type
+							'<td class = "table-success">Fresh Data</td>' +               // Status
+							'<td class = "table-success">'+ DB_Data[j][0][i] +'</td>'     // Time
+	      } else if (DB_Data[j][3][i] == 20){ 
+			tr.innerHTML =  '<td class = "table-warning">'+ DB_Data[j][4][i] +'</td>' +   // Register
+							'<td class = "table-warning">'+ DB_Data[j][2][i] +'</td>' +   // Value
+							'<td class = "table-warning">'+ DB_Data[j][1][i] +'</td>' +   // Type
+							'<td class = "table-warning">Stale Data</td>' +               // Status
+							'<td class = "table-warning">'+ DB_Data[j][0][i] +'</td>'     // Time
+		  } else if (DB_Data[j][3][i] == 0){
+			tr.innerHTML =  '<td class = "table-danger">'+ DB_Data[j][4][i] +'</td>' +   // Register
+							'<td class = "table-danger">'+ DB_Data[j][2][i] +'</td>' +   // Value
+							'<td class = "table-danger">'+ DB_Data[j][1][i] +'</td>' +   // Type
+							'<td class = "table-danger">No Connection/Missing Data</td>'+// Status
+							'<td class = "table-danger">'+ DB_Data[j][0][i] +'</td>'     // Time
+		  } else {
+			tr.innerHTML =  '<td>'+ DB_Data[j][4][i] +'</td>' +   // Register
+							'<td>'+ DB_Data[j][2][i] +'</td>' +   // Value
+							'<td>'+ DB_Data[j][1][i] +'</td>' +   // Type
+							'<td>Unknown</td>' +                  // Status
+							'<td>'+ DB_Data[j][0][i] +'</td>'     // Time
+		  }
+          mainContainer.appendChild(tr);
+		}
+	}  
 }
 
 function chart(data){
 //Publish Data Chart
-window.chartColors = { 	red: 'rgb(255, 0, 0)', 	green: 'rgb(0, 128, 0)', yellow: 'rgb(200, 200, 0)' }; 
+window.chartColors = { 	red: 'rgb(255, 0, 0)', 	green: 'rgb(0, 128, 0)', yellow: 'rgb(200, 200, 0)', gray: 'rgb(80, 80, 80)' }; 
 
 var randomScalingFactor = function() {
 			return Math.round(Math.random() * 100);
 		};
 
 var today = new Date();
-var labelnames = DB_Data[0][1];
-    
-var count = data[2][0].response.length; //TODO: Make a max function to compare all data[2] lengths
+var labelnames = DB_Data[0][0];
 
 var config = {
 		type: 'line',
-		data: { //TODO: Make number of datasets scale-able
+		data: { 
 			labels: labelnames,
-			datasets: [{
-				label: 'Register ' +data[2][0].register,
-				data: DB_Data[0][3],
-				borderColor: window.chartColors.green,
-				backgroundColor: 'rgba(0, 0, 0, 0)',
-				fill: false,
-				cubicInterpolationMode: 'monotone'
-			}, {
-				label: 'Register ' +data[2][1].register,
-				data: DB_Data[1][3],
-				borderColor: window.chartColors.red,
-				backgroundColor: 'rgba(0, 0, 0, 0)',
-				fill: false,
-				cubicInterpolationMode: 'monotone'
-            }]
+			datasets: []
 		},
 		options: {
 			responsive: true,
@@ -119,7 +131,20 @@ var config = {
 				text: 'Configuration Chart'
 			},
 			tooltips: {
-				mode: 'index'
+				mode: 'nearest',
+				callbacks: {
+					afterBody: function(t, d){
+						if (DB_Data[t[0].datasetIndex][3][t[0].index] == 128){
+							return 'Fresh Data';
+	     				} else if (DB_Data[t[0].datasetIndex][3][t[0].index] == 20){ 
+							return 'Stale Data';
+		 				} else if (DB_Data[t[0].datasetIndex][3][t[0].index] == 0){
+							return 'Missing Data/Connection';
+		 				} else {
+							return 'Unknown State';
+		 				}
+					}
+				}
 			},
 			scales: {
 				xAxes: [{
@@ -127,6 +152,7 @@ var config = {
 					scaleLabel: {
 						display: true
 					}
+					
 				}],
 				yAxes: [{
 					display: true,
@@ -136,15 +162,56 @@ var config = {
 					},
 					ticks: {
 						suggestedMin: 0,
-						suggestedMax: 100,
-					}
+					},
+					offset: true
 				}]
-			}
+			},
+
 		},		
 	};
 
 var ctx = document.getElementById('canvas').getContext('2d');
 window.myLine = new Chart(ctx, config);
+var myChart = window.myLine;
+
+for(i = 0; i < DB_Data.length; i++){
+var dset = {
+		label: 'Register ' +data[2][i].register,
+		data: DB_Data[i][2],
+		backgroundColor: 'rgba(0,0,0,0)',
+		fill: false,
+		cubicInterpolationMode: 'monotone',
+		pointBackgroundColor: [],
+		pointStyle: [],
+		radius: 3
+	}
+	myChart.data.datasets.push(dset);
+}
+
+myChart.update()
+	for(j = 0; j < DB_Data.length; j++){
+		for(i = 0; i < DB_Data[j][3].length; i++){
+			if(DB_Data[j][3][i] == 128){
+
+				myChart.data.datasets[j].pointBackgroundColor.push("green");
+				myChart.data.datasets[j].pointStyle.push("rect");
+			} else if (DB_Data[j][3][i] == 20){
+
+				myChart.data.datasets[j].pointBackgroundColor.push("yellow");
+				myChart.data.datasets[j].pointStyle.push("triange");
+			} else if (DB_Data[j][3][i] == 0){
+
+				myChart.data.datasets[j].pointBackgroundColor.push("red");
+				myChart.data.datasets[j].pointStyle.push("circle");
+			} else {
+
+				myChart.data.datasets[j].pointBackgroundColor.push("gray");
+				myChart.data.datasets[j].pointStyle.push("star");
+			}
+		}
+	}
+myChart.update()
+
 }
 </script>
 </body>
