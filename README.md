@@ -1,45 +1,76 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# IOT Project: Team9
+### By Crehul Vlad, Farcasan Darius and Hornai Vlad
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+## Following is an example on how the graph might look after some usage
+![Imgur](https://i.imgur.com/7rIDZBw.jpg)
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+## Recieved/Input Data
+### The `modbus_gw.ini` will have to be of this format:
+```
+[INPUT_REGISTERS]
 
----
+REGISTER = 10,2,1020000000000061,2,129,5,0,0,0,2
+REGISTER = 13,2,0022FF0000021F11,2,7,1,0,0,0,2
 
-## Edit a file
+#[INPUT_REGISTERS]
+#REGISTER = <start_addr>,<word_cnt>,<EUI64>,<TSAPID>,<ObjId>,<AttrId>,<Idx1>,<Idx2>,<MethId>,<status>
+#REGISTER = <start_addr>,<word_cnt>,<EUI64>,<TSAPID>,<ObjId>,<AttrId>,<Idx1>,<Idx2>,<MethId>,<status>
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+#[HOLDING_REGISTERS]
+#REGISTER = <start_addr>,<word_cnt>,<EUI64>,<TSAPID>,<ObjId>,<AttrId>,<Idx1>,<Idx2>,<MethId>,<status>
+#REGISTER = <start_addr>,<word_cnt>,<EUI64>,<TSAPID>,<ObjId>,<AttrId>,<Idx1>,<Idx2>,<MethId>,<status>
+```
+### And the `Monitor_Host_Publisher.conf` will have this format:
+```
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+[1020:0000:0000:0061]
+#concentrator_info = CO_TSAP_ID, CO_ID, Data_Period, Data_Phase, Data_StaleLimit, Data_version, interfaceType
+CONCENTRATOR = 2, 4, 15, 0, 5, 16, 2
+#channel_info = TSAP_ID, ObjID, AttrID, Index1, Index2, format = {'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'float'}, name, unit of measurement, withStatus
+CHANNEL = 2, 129, 5, 0, 0, 'float', '°C', 'degree Celsius', 0
+CHANNEL = 2, 129, 6, 0, 0, 'float', 'Reserved', 'Manufacturer Specific', 0
+CHANNEL = 2, 129, 7, 0, 0, 'float', 'Reserved', 'Manufacturer Specific', 0
+CHANNEL = 2, 129, 8, 0, 0, 'float', 'Reserved', 'Manufacturer Specific', 0
 
----
 
-## Create a file
+[0022:FF00:0002:1F11]
+#concentrator_info = CO_TSAP_ID, CO_ID, Data_Period, Data_Phase, Data_StaleLimit, Data_version, interfaceType
+CONCENTRATOR = 2, 3, 10, 0, 5, 61, 1
+#channel_info = TSAP_ID, ObjID, AttrID, Index1, Index2, format = {'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'float'}, name, unit of measurement, withStatus
+CHANNEL = 2, 5, 1, 0, 0, 'float', '%', 'percent', 1
+CHANNEL = 2, 6, 1, 0, 0, 'float', '%', 'percent', 1
+CHANNEL = 2, 7, 1, 0, 0, 'float', '°C', 'degree Celsius', 1
 
-Next, you’ll add a new file to this repository.
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+[1060:0000:0000:0061]
+#concentrator_info = CO_TSAP_ID, CO_ID, Data_Period, Data_Phase, Data_StaleLimit, Data_version, interfaceType
+CONCENTRATOR = 2, 4, 60, 0, 5, 16, 2
+#channel_info = TSAP_ID, ObjID, AttrID, Index1, Index2, format = {'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'float'}, name, unit of measurement, withStatus
+CHANNEL = 2, 129, 5, 0, 0, 'float', '°C', 'degree Celsius', 0
+CHANNEL = 2, 129, 6, 0, 0, 'float', '%', 'percent', 0
+CHANNEL = 2, 129, 7, 0, 0, 'float', 'Reserved', 'Manufacturer Specific', 0
+CHANNEL = 2, 129, 8, 0, 0, 'float', 'Reserved', 'Manufacturer Specific', 0
+```
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+## Data Parsing
+- We had to parse the data from `modbus_gw.in` and `Monitor_Host_Publisher.conf`
+- Those will be saved after fetching new data into `\static\Modbus_Gw_File_Parsed.json`, respectivly `\static\Monitor_Host_Publisher_Parsed.json`
+- The parsing is done by `Modbus_Gw_Parsed.py` and `Monitor_Host_Parsed.py`
 
----
+Alongside the `conf` and `ini` file we had to parse the data coming from the modbus server.
 
-## Clone a repository
+- This data will be saved in `\static\pyModbus.json`
+- The connection to the modbus server is done via `pyModbus.py`. This also handles the parsing
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+## Database
+- The data from `\static\pyModbus.json` will be stored in a database via MongoDB and handled by PyMongo
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+## Backend
+- The python scripts will be called by `backend.py` which is a web framework known as Flask. This will handle the webpage rendering and using the python programs.
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+## Frontend/Interface/Graph
+- The data will be dispalyed on a web application
+- The interface is handled by `\templates\Publisher_Display.html` This includes the HTML and JavaScript part. Also of note part of the styling is in `\static\css\chart.css`
+- The page is rendered by the backend as mentioned above.
+## This is a complete overview of the result
+![Imgur](https://i.imgur.com/EC3pt18.jpg)
